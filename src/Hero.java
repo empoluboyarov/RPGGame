@@ -3,7 +3,8 @@
  */
 public class Hero extends GameCharacter {
 
-    public Hero(String charClass, String name) {
-        super(charClass, name);
+
+    public Hero(String charClass, String name, int xp, int attack, int defence) {
+        super(charClass, name, xp, attack, defence);
     }
 }
