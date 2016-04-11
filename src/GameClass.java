@@ -14,6 +14,7 @@ public class GameClass {
     private Hero mainHero;
     private Monster currrentMonster;
     private int currentRound; // переменная считает количество раундов
+    private int monsterID = 0;
 
     public GameClass(){
         initGame();
@@ -40,17 +41,17 @@ public class GameClass {
         for (int i = 0; i<3; i++ ){
             System.out.println((i+1)+". "+ heroPattern[i].getName());
         }
-        inpInt = sc.nextInt();
+        //inpInt = sc.nextInt();
+        inpInt = 1;
         mainHero = (Hero)heroPattern[inpInt-1].clone();
         System.out.println("Вы выбрали " + mainHero.getName());
-        currrentMonster = (Monster)monsterPattern[0].clone();
+        currrentMonster = (Monster)monsterPattern[monsterID].clone();
 
         do {
             System.out.println("Текущий раунд: " + currentRound);
             mainHero.showInfo();
             currrentMonster.showInfo();
-            System.out.println("Ход игрока.");
-            System.out.println("1.Атака  2.Защита  3.Пропустить ход  9.Завершить игру.");
+            System.out.println("Ход игрока: 1.Атака  2.Защита  3.Пропустить ход  9.Завершить игру.");
             inpInt = sc.nextInt();
             // атакующие действия персонажа
             if (inpInt == 1){
@@ -60,9 +61,24 @@ public class GameClass {
             if (inpInt == 9) break;
             mainHero.getDamage(currrentMonster.makeAttack());
             currentRound++;
+            if (!mainHero.isAlive )
+                break;
+            if (!currrentMonster.isAlive){
+                System.out.println(currrentMonster.getName() + " погиб.");
+                monsterID ++;
+                mainHero.expGain(currrentMonster.getHpMax()*5);
+                if (monsterID < monsterPattern.length) {
+                    currrentMonster = (Monster)monsterPattern[monsterID].clone();
+                    System.out.println("На поле боя выходит "+ currrentMonster.getName());
+                } else break;
+            }
         } while (true);
-
-
+        if (!currrentMonster.isAlive)
+            System.out.println("Игрок "+ mainHero.getName()+" перебил всех монстров.");
+        if (!mainHero.isAlive){
+        System.out.println("Победил монстр "+ currrentMonster.getName()+ " .");
+    }
+        System.out.println("Игра завершена");
     }
 
 }
