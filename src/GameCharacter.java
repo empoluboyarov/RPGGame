@@ -11,7 +11,9 @@ public class GameCharacter implements Cloneable{
     protected int defence;
     protected int critChance; // вероятность нанесения критического урона
     protected int level;
-    public boolean isAlive;
+    protected boolean blockStance;
+    
+    protected boolean life;
 
     public GameCharacter(String charClass, String name, int hp, int attack, int defence) {
         this.charClass = charClass;
@@ -21,12 +23,18 @@ public class GameCharacter implements Cloneable{
         this.attack = attack;
         this.defence = defence;
         critChance = 10; // вероятность нанесения критического урона
-        isAlive = true;
+        life = true;
         level = 1;
+        blockStance = false;
     }
 
-    public String getName() {
-        return name;
+    public void setBlockStance(){
+        blockStance = true;
+        System.out.println(name + " встал в защитную стойку");
+    }
+
+    public void makeNewRound(){
+        blockStance = false;
     }
 
     public void showInfo() {
@@ -49,11 +57,27 @@ public class GameCharacter implements Cloneable{
         return hpMax;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public boolean isAlive() {
+        return life;
+    }
+
     public void getDamage(int inputDamage){
+
+        inputDamage -= defence;
+        if (blockStance){
+            System.out.println(name + " дополнительно заблокировал " + defence + " ед. урона в защитной стойке");
+            inputDamage -= defence;
+        }
+        if (inputDamage<0) inputDamage = 0; // проверка на отрицательный урон для предотвращения эффекта лечения
+
         System.out.println(name + " получил " + inputDamage + " ед. урона.");
         hp -= inputDamage;
         if (hp <1)
-            isAlive = false;
+            life = false;
     }
 
     @Override

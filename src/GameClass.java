@@ -12,73 +12,84 @@ public class GameClass {
     private Monster[] monsterPattern = new Monster[3];
 
     private Hero mainHero;
-    private Monster currrentMonster;
+    private Monster currentMonster;
     private int currentRound; // переменная считает количество раундов
-    private int monsterID = 0;
 
     public GameClass(){
         initGame();
     }
     // метод инициализирует начальное состояние игры
     public void initGame() {
-        heroPattern[0] = new Hero("Knight","Lancelot",100,10,5);
-        heroPattern[1] = new Hero("Barbarian", "Konan",200,20,0);
-        heroPattern[2] = new Hero("Dwarf", "Gimli",100,15,20);
+        heroPattern[0] = new Hero("Knight", "Lancelot", 600, 30, 12);
+        heroPattern[1] = new Hero("Barbarian", "Konan", 600, 50, 0);
+        heroPattern[2] = new Hero("Dwarf", "Gimli", 600, 20, 25);
 
-        monsterPattern[0] = new Monster("Humanoid", "Goblin",50,5,1);
-        monsterPattern[1] = new Monster("Humanoid", "Orc",80,6,2);
-        monsterPattern[2] = new Monster("Humanoid", "Troll",90,5,1);
+        monsterPattern[0] = new Monster("Humanoid", "Goblin", 120, 30, 2);
+        monsterPattern[1] = new Monster("Humanoid", "Orc", 240, 50, 2);
+        monsterPattern[2] = new Monster("Humanoid", "Troll", 400, 25, 5);
 
         currentRound = 1;
     }
     // метод отвечает за основную игровую логику
-    public void mainGameLoop(){
-
+    public void mainGameLoop() {
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! необходимо реализовать метод проверки введения правильности данных
         Scanner sc = new Scanner(System.in);
         int inpInt = 0;
         System.out.println("Игра началась");
         System.out.println("Выберите героя");
-        for (int i = 0; i<3; i++ ){
-            System.out.println((i+1)+". "+ heroPattern[i].getName());
+        for (int i = 0; i < 3; i++) {
+            System.out.println((i + 1) + ". " + heroPattern[i].getName());
         }
-        //inpInt = sc.nextInt();
-        inpInt = 1;
-        mainHero = (Hero)heroPattern[inpInt-1].clone();
+        inpInt = sc.nextInt();
+
+
+        mainHero = (Hero) heroPattern[inpInt - 1].clone();
         System.out.println("Вы выбрали " + mainHero.getName());
-        currrentMonster = (Monster)monsterPattern[monsterID].clone();
+        currentMonster = (Monster) monsterPattern[random.nextInt(3)].clone();
 
         do {
             System.out.println("Текущий раунд: " + currentRound);
             mainHero.showInfo();
-            currrentMonster.showInfo();
+            currentMonster.showInfo();
+
             System.out.println("Ход игрока: 1.Атака  2.Защита  3.Пропустить ход  9.Завершить игру.");
+            mainHero.makeNewRound();
+// ход игрока
+
             inpInt = sc.nextInt();
-            // атакующие действия персонажа
+            System.out.print("\n\n");
+
             if (inpInt == 1){
-                currrentMonster.getDamage(mainHero.makeAttack());
+                currentMonster.getDamage(mainHero.makeAttack());
+                if (!currentMonster.isAlive()){ // если монстр погиб от удара
+                    System.out.println(currentMonster.getName() + " погиб");
+                    mainHero.expGain(currentMonster.getHpMax() * 2); // Даем герою опыта в размере (Здоровье_монстра * 2)
+                    currentMonster = (Monster)monsterPattern[random.nextInt(3)].clone(); // Создаем нового монстра случайного типа, копируя из шаблона
+                    System.out.println("На поле боя выходит " + currentMonster.getName()); // Выводим сообщение о выходе нового врага на поле боя
+                }
             }
 
-            if (inpInt == 9) break;
-            mainHero.getDamage(currrentMonster.makeAttack());
-            currentRound++;
-            if (!mainHero.isAlive )
-                break;
-            if (!currrentMonster.isAlive){
-                System.out.println(currrentMonster.getName() + " погиб.");
-                monsterID ++;
-                mainHero.expGain(currrentMonster.getHpMax()*5);
-                if (monsterID < monsterPattern.length) {
-                    currrentMonster = (Monster)monsterPattern[monsterID].clone();
-                    System.out.println("На поле боя выходит "+ currrentMonster.getName());
-                } else break;
+            if (inpInt == 2){
+                mainHero.setBlockStance();
             }
+
+            if (inpInt == 9)
+                break;
+
+            // ход монстра
+            currentMonster.makeNewRound();
+            mainHero.getDamage(currentMonster.makeAttack());
+            if (!mainHero.isAlive())
+                break;
+
         } while (true);
-        if (!currrentMonster.isAlive)
-            System.out.println("Игрок "+ mainHero.getName()+" перебил всех монстров.");
-        if (!mainHero.isAlive){
-        System.out.println("Победил монстр "+ currrentMonster.getName()+ " .");
-    }
+        // В зависимости от того, кто остался в живых - выводим итоговое сообщение о результате игры
+        if (currentMonster.isAlive() && mainHero.isAlive())
+            System.out.println(mainHero.getName() + " сбежал с поля боя");
+        if (!currentMonster.isAlive())
+            System.out.println("Победил " + mainHero.getName());
+        if (!mainHero.isAlive())
+            System.out.println("Победил " + currentMonster.getName());
         System.out.println("Игра завершена");
     }
-
 }
