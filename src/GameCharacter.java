@@ -67,10 +67,10 @@ public class GameCharacter implements Cloneable{
 
     public void getDamage(int inputDamage){
 
-        inputDamage -= defence;
+        inputDamage -= GameClass.random.nextInt(defence);
         if (blockStance){
-            System.out.println(name + " дополнительно заблокировал " + defence + " ед. урона в защитной стойке");
-            inputDamage -= defence;
+            System.out.println(name + " дополнительно заблокировал чать урона в защитной стойке.");
+            inputDamage -= GameClass.random.nextInt(defence);
         }
         if (inputDamage<0) inputDamage = 0; // проверка на отрицательный урон для предотвращения эффекта лечения
 

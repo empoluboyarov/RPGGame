@@ -14,6 +14,7 @@ public class GameClass {
     private Hero mainHero;
     private Monster currentMonster;
     private int currentRound; // переменная считает количество раундов
+    private Scanner sc = new Scanner(System.in);
 
     public GameClass(){
         initGame();
@@ -33,14 +34,15 @@ public class GameClass {
     // метод отвечает за основную игровую логику
     public void mainGameLoop() {
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! необходимо реализовать метод проверки введения правильности данных
-        Scanner sc = new Scanner(System.in);
+
         int inpInt = 0;
         System.out.println("Игра началась");
-        System.out.println("Выберите героя");
+        String startText = "Выберите героя";
+        System.out.println(startText);
         for (int i = 0; i < 3; i++) {
             System.out.println((i + 1) + ". " + heroPattern[i].getName());
         }
-        inpInt = sc.nextInt();
+        inpInt = getAction(1,3,startText);
 
 
         mainHero = (Hero) heroPattern[inpInt - 1].clone();
@@ -52,11 +54,10 @@ public class GameClass {
             mainHero.showInfo();
             currentMonster.showInfo();
 
-            System.out.println("Ход игрока: 1.Атака  2.Защита  3.Пропустить ход  9.Завершить игру.");
             mainHero.makeNewRound();
 // ход игрока
 
-            inpInt = sc.nextInt();
+            inpInt = getAction(0,3,"Ход игрока: 1.Атака  2.Защита  3.Пропустить ход  0.Завершить игру.");
             System.out.print("\n\n");
 
             if (inpInt == 1){
@@ -73,7 +74,7 @@ public class GameClass {
                 mainHero.setBlockStance();
             }
 
-            if (inpInt == 9)
+            if (inpInt == 0)
                 break;
 
             // ход монстра
@@ -91,5 +92,15 @@ public class GameClass {
         if (!mainHero.isAlive())
             System.out.println("Победил " + currentMonster.getName());
         System.out.println("Игра завершена");
+    }
+
+
+    public int getAction(int min, int max, String str) {
+        int x = 0;
+        do {
+            if(str != "" ) System.out.println(str);
+            x = sc.nextInt();
+        } while (x < min || x > max);
+        return x;
     }
 }
