@@ -29,6 +29,7 @@ public class Inventory {
 
     public void showAllItems(){
         System.out.println("Инвентарь: ");
+        System.out.println("0. Закончить осмотр");
         if (inv.size()>0){
             for (int i = 0; i < inv.size(); i++)
                 System.out.println((i+1)+". " + inv.get(i));
