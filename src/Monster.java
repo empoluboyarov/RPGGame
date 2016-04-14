@@ -5,36 +5,21 @@ import java.util.ArrayList;
  */
 public class Monster extends GameCharacter {
 
-    private ArrayList<String> loot;
-    private int lootIndex;
-
-    public Monster(String charClass, String name, int strength, int dexterity, int endurance)
-    {
+    public Monster(String charClass, String name, int strength, int dexterity, int endurance) {
         super(charClass, name, strength, dexterity, endurance);
-        loot = createLoot();
+        myInv = new Inventory();
+        myInv.add(new Item("Слабое зелье лечения", Item.ItemType.Consumables));
+        myInv.addSomeCoins(100);
     }
 
-    private ArrayList<String> createLoot() {
-        loot = new ArrayList<String>();
-        loot.add(0, "Слабое зелье лечения");
-        loot.add(1, "Среднее зелье лечения");
-        loot.add(2, "Сильное зелье лечения");
-        return loot;
+    public void lvlUp(int level){
+        for (int i = 0; i < level; i++){
+            strength += base_strength*0.3f;
+            dexterity += base_dexterity*0.3f;
+            endurance += base_endurance*0.3f;
+        }
+        calculateSecondaryParameters();
+        hp = hpMax;
+        showInfo();
     }
-
-    public String getLoot() {
-
-        int loots = GameClass.random.nextInt(100);
-
-        if (loots <=100 && loots > 50 ) {
-            lootIndex = 0;
-        } else if (loots <= 50 && loots >= 15){
-            lootIndex = 1;
-        } else lootIndex = 2;
-
-        System.out.println("От убитого монстра остается " + loot.get(lootIndex));
-
-        return loot.get(lootIndex);
-    }
-
 }

@@ -6,15 +6,13 @@ import java.util.Scanner;
  */
 public class GameClass {
 
-    public static Random random = new Random(); //генератор случайных чисел
-
     private Hero[] heroPattern = new Hero[3];
     private Monster[] monsterPattern = new Monster[3];
 
     private Hero mainHero;
     private Monster currentMonster;
     private int currentRound; // переменная считает количество раундов
-    private Scanner sc = new Scanner(System.in);
+
 
     public GameClass(){
         initGame();
