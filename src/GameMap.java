@@ -46,7 +46,7 @@ public class GameMap {
     public void showMap() {
         for (int i = 0; i < msy; i++){
             for (int j = 0; j< msx; j++){
-                System.out.println(map[i][j] + " ");
+                System.out.print(map[i][j] + " ");
             }
             System.out.println();
         }

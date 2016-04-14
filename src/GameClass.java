@@ -27,8 +27,55 @@ public class GameClass {
         shop = new InGameShop();
         inpInt = 0;
         System.out.println("Игра началась");
-
         selectHero();
+        mainHero.setXY(10,3);
+        map.buildDangMap(10,3);
+        map.updateMap(mainHero.getPosX(),mainHero.getPosY());
+        map.showMap();
+
+        while (true){
+            int x = getAction(1, 6, "Что Вы хотите делать дальше 1. Пойти влево; 2. Пойти вправо; 3. Пойти вверх; 4. Пойти вниз; 5. Найти монстров; 6. Отдохнуть");
+
+            switch (x){
+                case 1:
+                    if(map.isCellEmpty(mainHero.getPosX() - 1, mainHero.getPosY()))
+                        mainHero.moveHero(-1, 0);
+                    break;
+                case 2:
+                    if(map.isCellEmpty(mainHero.getPosX() + 1, mainHero.getPosY()))
+                        mainHero.moveHero(1, 0);
+                    break;
+                case 3:
+                    if(map.isCellEmpty(mainHero.getPosX(), mainHero.getPosY() - 1))
+                        mainHero.moveHero(0, -1);
+                    break;
+                case 4:
+                    if(map.isCellEmpty(mainHero.getPosX(), mainHero.getPosY() + 1))
+                        mainHero.moveHero(0, 1);
+                    break;
+                case 5:
+                    currentMonster = (Monster) monsterPattern[(Utils.random.nextInt(3))].clone();
+                    currentMonster.lvlUp(map.getDangerous(mainHero.getPosX(),mainHero.getPosY()));
+                    battle(mainHero,currentMonster);
+                    break;
+                case 6:
+                    mainHero.fullHeal();
+                    break;
+            }
+            if (map.getObstValue(mainHero.getPosX(),mainHero.getPosY()) == 'S')
+                shopAction();
+            if (Utils.random.nextInt(100)<3){
+                System.out.println("На Вас внезапно напали!!!");
+                currentMonster = (Monster) monsterPattern[(Utils.random.nextInt(3))-1].clone();
+                currentMonster.lvlUp(map.getDangerous(mainHero.getPosX(), mainHero.getPosY()));
+                battle(mainHero, currentMonster);
+            }
+            map.updateMap(mainHero.getPosX(),mainHero.getPosY());
+            map.showMap();
+            if (!mainHero.isAlive())
+                break;
+        }
+        System.out.println("Игра завершена");
     }
 
 
@@ -73,45 +120,45 @@ public class GameClass {
                     hero.addKillCounter();
                     hero.expGain(monster.getHpMax() * 2); // Даем герою опыта в размере (Здоровье_монстра * 2)
                     monster.myInv.transferAllItemsToAnotherInventory(hero.myInv);
+                    break;
                 }
             }
 
             if (inpInt == 2){
-                mainHero.setBlockStance();
+                hero.setBlockStance();
             }
 
             if (inpInt == 3){
-                mainHero.myInv.showAllItems();
-                int invInput = getAction(0, mainHero.myInv.getSize(), "Выберите предмет для использования");
-                String usedItem = mainHero.myInv.useItem(invInput);
+                hero.myInv.showAllItems();
+                int invInput = getAction(0, hero.myInv.getSize(), "Выберите предмет для использования");
+                String usedItem = hero.myInv.useItem(invInput);
                 if (usedItem != "") {
-                    System.out.println(mainHero.getName() + " использовал " + usedItem);
-                    mainHero.useItem(usedItem);
+                    System.out.println(hero.getName() + " использовал " + usedItem);
+                    hero.useItem(usedItem);
                 } else
-                    System.out.println(mainHero.getName() + " просто закрыл сумку");
+                    System.out.println(hero.getName() + " просто закрыл сумку");
             }
 
             if (inpInt == 0)
                 break;
 
             // ход монстра
-            currentMonster.makeNewRound();
+            monster.makeNewRound();
             if(Utils.random.nextInt(100) < 80)
-                mainHero.getDamage(currentMonster.makeAttack()); // По умолчанию, монстр всегда атакует
+                hero.getDamage(monster.makeAttack()); // По умолчанию, монстр всегда атакует
             else
-                currentMonster.setBlockStance();
-            if (!mainHero.isAlive())
+                monster.setBlockStance();
+            if (!hero.isAlive())
                 break;
 
         } while (true);
         // В зависимости от того, кто остался в живых - выводим итоговое сообщение о результате игры
-        if (currentMonster.isAlive() && mainHero.isAlive())
-            System.out.println(mainHero.getName() + " сбежал с поля боя");
-        if (!currentMonster.isAlive())
-            System.out.println("Победил " + mainHero.getName());
-        if (!mainHero.isAlive())
-            System.out.println("Победил " + currentMonster.getName());
-        System.out.println("Игра завершена");
+        if (monster.isAlive() && hero.isAlive())
+            System.out.println(hero.getName() + " сбежал с поля боя");
+        if (!monster.isAlive())
+            System.out.println("Победил " + hero.getName());
+        if (!hero.isAlive())
+            System.out.println("Победил " + monster.getName());
     }
 
     public void shopAction(){

@@ -60,6 +60,7 @@ public class Inventory {
         for (int i = 0; i< inv.size(); i++){
             inventory.add(inv.get(i));
             inventory.addSomeCoins(gold);
+            System.out.println("Герой забрал у убитого монстра "+ gold+" золота и припасы. ");
         }
     }
 
